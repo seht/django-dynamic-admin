@@ -1,0 +1,13 @@
+__pycache__/*
+*.pyc
+*.pyo
+*.sqlite*
+.~*
+/share/*
+/bin/*
+/lib/*
+/include/*
+/env/*
+/static/*
+/pip-selfcheck.json
+/.idea/*
