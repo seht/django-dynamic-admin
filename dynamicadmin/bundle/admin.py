@@ -1,11 +1,11 @@
-from importlib import reload
 from django.contrib import admin
 from django.apps import apps
-from django.conf import settings
 from django.contrib.auth.management import create_permissions
-from django.db.utils import ProgrammingError
-from django.urls.base import clear_url_caches
-from django.utils.module_loading import import_module
+# from importlib import reload
+# from django.conf import settings
+# from django.db.utils import ProgrammingError
+# from django.urls.base import clear_url_caches
+# from django.utils.module_loading import import_module
 
 from dynamicadmin.entity.models import BundleEntity
 from .models import CharField, TextField, TaxonomyDictionaryField, DateTimeField, URLField
@@ -94,5 +94,5 @@ def unregister_dynamic_models(app_label):
     apps.clear_cache()
 
 
-def create_dynamic_model_permissions(verbosity=2):
+def create_dynamic_model_permissions(app_label, verbosity=2):
     create_permissions(apps.get_app_config(app_label), verbosity=verbosity)

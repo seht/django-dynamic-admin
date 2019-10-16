@@ -3,13 +3,7 @@ __pycache__/*
 *.pyo
 *.sqlite*
 .~*
-/share/*
-/bin/*
-/lib/*
-/include/*
 /env/*
-/static/*
-/pip-selfcheck.json
 /.idea/*
 /build/*
 /dist/*
