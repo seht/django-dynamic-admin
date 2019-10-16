@@ -74,10 +74,10 @@ def register_dynamic_model(bundle_model_object, model_admin=admin.ModelAdmin, **
 
 
 def register_dynamic_models(bundle_model, app_label, model_admin=admin.ModelAdmin, base=BundleEntity, **kwargs):
-    kwargs['app_label'] = app_label
-    kwargs['base'] = base
     try:
         bundle_models_objects = get_bundle_objects(bundle_model)
+        kwargs['app_label'] = app_label
+        kwargs['base'] = base
         for bundle_model_object in bundle_models_objects:
             register_dynamic_model(bundle_model_object, model_admin=model_admin, **kwargs)
     except ProgrammingError:
