@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.apps import apps
+from django.db.utils import ProgrammingError
 from django.contrib.auth.management import create_permissions
 # from importlib import reload
 # from django.conf import settings
-# from django.db.utils import ProgrammingError
 # from django.urls.base import clear_url_caches
 # from django.utils.module_loading import import_module
 
@@ -76,9 +76,13 @@ def register_dynamic_model(bundle_model_object, model_admin=admin.ModelAdmin, **
 def register_dynamic_models(bundle_model, app_label, model_admin=admin.ModelAdmin, base=BundleEntity, **kwargs):
     kwargs['app_label'] = app_label
     kwargs['base'] = base
-    bundle_models_objects = get_bundle_objects(bundle_model)
-    for bundle_model_object in bundle_models_objects:
-        register_dynamic_model(bundle_model_object, model_admin=model_admin, **kwargs)
+    try:
+        bundle_models_objects = get_bundle_objects(bundle_model)
+        for bundle_model_object in bundle_models_objects:
+            register_dynamic_model(bundle_model_object, model_admin=model_admin, **kwargs)
+    except ProgrammingError:
+        # If migrating before the bundle models have been generated.
+        pass
 
 
 # @see django.apps.registry.register_model
