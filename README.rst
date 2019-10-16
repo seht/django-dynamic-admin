@@ -1,10 +1,13 @@
-=====
+====================
 Django-Dynamic-Admin
-=====
+====================
+
+Create dynamic models from Django administration.
 
 
 Quick start
 -----------
+
 1. Install django-dynamic-admin package in your Django project::
 
     pip install django-dynamic-admin

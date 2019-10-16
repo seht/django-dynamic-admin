@@ -11,3 +11,6 @@ __pycache__/*
 /static/*
 /pip-selfcheck.json
 /.idea/*
+/build/*
+/dist/*
+/*.egg-info

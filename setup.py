@@ -9,13 +9,13 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-dynamic-admin',
-    version='0.1',
+    version='0.1.0',
     packages=find_packages(),
     include_package_data=True,
     license='BSD License',  # example license
-    description='A simple Django app create dynamic models from Django administration.',
+    description='Create dynamic models from Django administration',
     long_description=README,
-    url='https://www.example.com/',
+    url='https://github.com/seht/django-dynamic-admin',
     author='Seht',
     author_email='seht@hyx.net',
     install_requires=[
@@ -28,7 +28,7 @@ setup(
         'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',  # example license
+        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.5',
