@@ -6,7 +6,7 @@ Django-Dynamic-Admin
 Quick start
 -----------
 
-1. Add "djynamic" to your INSTALLED_APPS setting like this::
+1. Add "django-dynamic-admin" to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
         ...
