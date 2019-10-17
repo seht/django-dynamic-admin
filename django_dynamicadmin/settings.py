@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dynamicadmin.apps.DynamicadminConfig',
     'dynamicadmin.dynamicadmin_tests',
+    'dynamicadmin.dynamicadmin_tests.dynamicadmin_tests_app',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+from .settings_test import *
