@@ -8,6 +8,7 @@ from django.contrib.auth.management import create_permissions
 # from django.utils.module_loading import import_module
 
 from dynamicadmin.entity.models import BundleEntity
+from .models import get_dynamic_models, get_bundle_objects
 from .models import CharField, TextField, TaxonomyDictionaryField, DateTimeField, URLField
 
 
@@ -41,10 +42,6 @@ class BundleAdmin(admin.ModelAdmin):
     ]
 
 
-def get_bundle_objects(bundle_model):
-    return bundle_model.objects.all()
-
-
 def register_bundle_model(bundle_model, model_admin=BundleAdmin):
     if not admin.site.is_registered(bundle_model):
         admin.site.register(bundle_model, model_admin)
@@ -63,26 +60,23 @@ def unregister_bundle_model(bundle_model):
 #     clear_url_caches()
 
 
-def get_dynamic_models(app_label):
-    return apps.get_app_config(app_label).get_models()
-
-
 def register_dynamic_model(bundle_model_object, model_admin=admin.ModelAdmin, **kwargs):
-    dynamic_model = bundle_model_object.create_django_model(**kwargs)
+    dynamic_model = bundle_model_object.create_dynamic_model(**kwargs)
     if not admin.site.is_registered(dynamic_model):
         admin.site.register(dynamic_model, model_admin)
 
 
 def register_dynamic_models(bundle_model, app_label, model_admin=admin.ModelAdmin, base=BundleEntity, **kwargs):
     try:
-        bundle_models_objects = get_bundle_objects(bundle_model)
+        bundle_models_objects = list(get_bundle_objects(bundle_model))
+    except ProgrammingError:
+        # Before the bundle models have been migrated.
+        pass
+    else:
         kwargs['app_label'] = app_label
         kwargs['base'] = base
         for bundle_model_object in bundle_models_objects:
             register_dynamic_model(bundle_model_object, model_admin=model_admin, **kwargs)
-    except ProgrammingError:
-        # If migrating before the bundle models have been generated.
-        pass
 
 
 # @see django.apps.registry.register_model

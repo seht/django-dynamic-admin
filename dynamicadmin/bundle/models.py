@@ -4,10 +4,11 @@ from django.apps import apps
 from polymorphic.models import PolymorphicModel
 from dynamicadmin.entity.models import NamedEntity, UniqueNamedEntity, TaxonomyEntity
 from dynamicadmin.taxonomy.models import TaxonomyDictionary, TaxonomyTerm
+from dynamicadmin.apps import DynamicadminConfig
 
 
 # @see https://code.djangoproject.com/wiki/DynamicModels
-def bundle_model_factory(name, label, fields, app_label, module=None, base=models.Model):
+def dynamic_model_factory(name, label, fields, app_label, module=None, base=models.Model):
     if not module:
         module = base.__module__
 
@@ -31,29 +32,55 @@ def bundle_model_factory(name, label, fields, app_label, module=None, base=model
     return model
 
 
+def get_bundle_model(app_label, model_name):
+    return apps.get_app_config(app_label).get_model(model_name=model_name)
+
+
+def get_bundle_object(bundle_model, object_name):
+    return bundle_model.objects.get(name=object_name)
+
+
+def get_bundle_objects(bundle_model, **kwargs):
+    return bundle_model.objects.fitler(**kwargs)
+
+
+def get_dynamic_models(app_label):
+    return apps.get_app_config(app_label).get_models()
+
+
+def get_dynamic_model(app_label, model_name):
+    return apps.get_app_config(app_label).get_model(model_name=model_name)
+
+
+def get_dynamic_model_objects(dynamic_model, **kwargs):
+    return dynamic_model.objects.filter(**kwargs)
+
+
 class Bundle(UniqueNamedEntity, TaxonomyEntity):
     class Meta:
-        app_label = 'dynamicadmin'
+        app_label = DynamicadminConfig.name
 
     objects = models.Manager()
+    dynamic_model_app_label = ''
 
-    def create_django_model(self, **kwargs):
-        fields = self.get_django_fields()
+    def create_dynamic_model(self, **kwargs):
+        fields = self.get_dynamic_model_fields()
         fields.append(('bundle',
                        models.ForeignKey(self, default=self.pk, editable=False, on_delete=models.DO_NOTHING,
                                          related_name='+')))
-        return bundle_model_factory(self.name, self.label, dict(fields), **kwargs)
+        self.dynamic_model_app_label = kwargs.get('app_label')
+        return dynamic_model_factory(self.name, self.label, dict(fields), **kwargs)
 
-    def get_django_model(self, app_label):
-        return apps.get_app_config(app_label).get_model(self.name)
+    def get_dynamic_model(self, app_label):
+        return get_dynamic_model(app_label, model_name=self.name)
 
-    def get_django_fields(self):
+    def get_dynamic_model_fields(self):
         return [(field.name, field.get_django_field()) for field in self.fields.all()]
 
 
 class Field(NamedEntity, TaxonomyEntity, PolymorphicModel):
     class Meta:
-        app_label = 'dynamicadmin'
+        app_label = DynamicadminConfig.name
         unique_together = ('bundle', 'name',)
 
     def __str__(self):

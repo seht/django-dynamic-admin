@@ -35,4 +35,4 @@ Create new field types by extending `dynamicadmin.models.Field`
 Adding new Dictionary types
 ---------------------------
 
-Create new field types by extending `dynamicadmin.models.TaxonomyDictionary`
+Create new dictionary types by extending `dynamicadmin.models.TaxonomyDictionary`
