@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dynamicadmin.apps.DynamicadminConfig',
+    'dynamicadmin.dynamicadmin_tests',
 ]
 
 MIDDLEWARE = [
