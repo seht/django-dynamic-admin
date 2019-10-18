@@ -2,7 +2,7 @@
 Django-Dynamic-Admin
 ====================
 
-Create dynamic models from Django administration.
+Create dynamic models from Django administration (with migration support).
 
 
 Quick start
@@ -16,6 +16,7 @@ Quick start
 
     INSTALLED_APPS = [
         ...
+        'polymorphic' # Support for polymorphic admin inlines.
         'dynamicadmin',
     ]
 

@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-dynamic-admin',
-    version='0.1.2.2',
+    version='0.2.0.1',
     packages=find_packages(),
     include_package_data=True,
     license='BSD License',
@@ -19,6 +19,7 @@ setup(
     author='Seht',
     author_email='seht@hyx.net',
     install_requires=[
+        'django>=2.0',
         'django-polymorphic>=2.0',
     ],
     python_requires='>=3.5',

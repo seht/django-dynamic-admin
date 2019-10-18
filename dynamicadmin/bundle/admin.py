@@ -6,40 +6,47 @@ from django.contrib.auth.management import create_permissions
 # from django.conf import settings
 # from django.urls.base import clear_url_caches
 # from django.utils.module_loading import import_module
-
 from dynamicadmin.entity.models import BundleEntity
 from .models import get_dynamic_models, get_bundle_objects
-from .models import CharField, TextField, TaxonomyDictionaryField, DateTimeField, URLField
+from .models import Field, CharField, TextField, TaxonomyDictionaryField, DateTimeField, URLField
 
 
-class BundleAdmin(admin.ModelAdmin):
+from django.contrib import admin
+from polymorphic.admin import PolymorphicParentModelAdmin, StackedPolymorphicInline
 
-    class BundleTabularInline(admin.TabularInline):
-        show_change_link = True
-        extra = 0
 
-    class CharFieldInline(BundleTabularInline):
+class FieldAdminInline(StackedPolymorphicInline):
+    class CharFieldInline(StackedPolymorphicInline.Child):
         model = CharField
 
-    class TextFieldInline(BundleTabularInline):
+    class TextFieldInline(StackedPolymorphicInline.Child):
         model = TextField
 
-    class DateTimeFieldInline(BundleTabularInline):
+    class DateTimeFieldInline(StackedPolymorphicInline.Child):
         model = DateTimeField
 
-    class URLFieldInline(BundleTabularInline):
+    class URLFieldInline(StackedPolymorphicInline.Child):
         model = URLField
 
-    class TaxonomyListFieldInline(BundleTabularInline):
+    class TaxonomyListFieldInline(StackedPolymorphicInline.Child):
         model = TaxonomyDictionaryField
 
-    inlines = [
+    model = Field
+
+    child_inlines = (
         CharFieldInline,
         TextFieldInline,
         DateTimeFieldInline,
         URLFieldInline,
         TaxonomyListFieldInline,
-    ]
+    )
+
+    # classes = ['collapse']
+
+
+class BundleAdmin(PolymorphicParentModelAdmin):
+    child_models = (Field,)
+    inlines = (FieldAdminInline,)
 
 
 def register_bundle_model(bundle_model, model_admin=BundleAdmin):

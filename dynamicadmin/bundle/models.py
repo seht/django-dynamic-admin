@@ -41,7 +41,7 @@ def get_bundle_object(bundle_model, object_name):
 
 
 def get_bundle_objects(bundle_model, **kwargs):
-    return bundle_model.objects.fitler(**kwargs)
+    return bundle_model.objects.filter(**kwargs)
 
 
 def get_dynamic_models(app_label):
@@ -61,7 +61,6 @@ class Bundle(UniqueNamedEntity, TaxonomyEntity):
         app_label = DynamicadminConfig.name
 
     objects = models.Manager()
-    dynamic_model_app_label = ''
 
     def create_dynamic_model(self, **kwargs):
         fields = self.get_dynamic_model_fields()
