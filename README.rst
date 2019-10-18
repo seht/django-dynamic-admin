@@ -16,7 +16,7 @@ Quick start
 
     INSTALLED_APPS = [
         ...
-        'polymorphic' # Support for polymorphic admin inlines.
+        'polymorphic'  # Support for polymorphic admin inlines.
         'dynamicadmin',
     ]
 
