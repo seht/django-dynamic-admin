@@ -6,7 +6,7 @@ from django.contrib.auth.management import create_permissions
 # from django.conf import settings
 # from django.urls.base import clear_url_caches
 # from django.utils.module_loading import import_module
-from polymorphic.admin import PolymorphicParentModelAdmin, StackedPolymorphicInline, PolymorphicInlineSupportMixin
+from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline
 from dynamicadmin.entity.models import BundleEntity
 from .models import get_dynamic_models, get_bundle_objects
 from .models import Field, CharField, TextField, TaxonomyDictionaryField, DateTimeField, URLField
@@ -41,7 +41,7 @@ class FieldAdminInline(StackedPolymorphicInline):
     # classes = ['collapse']
 
 
-class BundleAdmin(PolymorphicParentModelAdmin, PolymorphicInlineSupportMixin):
+class BundleAdmin(PolymorphicInlineSupportMixin, admin.ModelAdmin):
     child_models = (Field,)
     inlines = (FieldAdminInline,)
 

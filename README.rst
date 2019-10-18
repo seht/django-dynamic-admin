@@ -37,3 +37,10 @@ Adding new Dictionary types
 ---------------------------
 
 Create new dictionary types by extending `dynamicadmin.models.TaxonomyDictionary`
+
+
+TODO
+----
+
+* Field weights
+* ...
