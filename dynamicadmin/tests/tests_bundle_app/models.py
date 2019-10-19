@@ -1,8 +1,4 @@
-from dynamicadmin.models import Bundle, TaxonomyDictionary
-
-
-class TestTaxonomyDictionary(TaxonomyDictionary):
-    pass
+from dynamicadmin.models import Bundle
 
 
 class TestBundle(Bundle):

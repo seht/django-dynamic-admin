@@ -16,7 +16,7 @@ Quick start
 
     INSTALLED_APPS = [
         ...
-        'polymorphic'  # Support for polymorphic admin inlines.
+        'polymorphic'
         'dynamicadmin',
     ]
 
@@ -33,10 +33,10 @@ Adding new Field types
 Create new field types by extending `dynamicadmin.models.Field`
 
 
-Adding new Dictionary types
----------------------------
+Adding new Content types
+------------------------
 
-Create new dictionary types by extending `dynamicadmin.models.TaxonomyDictionary`
+Create new content types by extending `dynamicadmin.models.Bundle`
 
 
 TODO
