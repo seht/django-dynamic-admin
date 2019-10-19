@@ -58,11 +58,18 @@ class Bundle(models.Model):
     def __str__(self):
         return self.label
 
+    ATTRIBUTE_FIELDS = {
+        'label': 'verbose_name',
+    }
+
     objects = models.Manager()
     fields = None
 
     name = models.SlugField(max_length=255, unique=True)
     label = models.CharField(max_length=255)
+
+    def get_attribute_fields(self):
+        return self.ATTRIBUTE_FIELDS
 
     def get_dynamic_model(self, app_label):
         return get_dynamic_model(app_label, model_name=self.name)
@@ -79,14 +86,12 @@ class Bundle(models.Model):
         return list((field.name, field.get_django_field()) for field in self.fields.all())
 
     def get_django_model_attributes(self):
-        attributes = {
-            'verbose_name': self.label,
-        }
+        attributes = dict()
         for field in self._meta.get_fields():
-            attribute = str(field.name)
-            value = getattr(self, attribute)
-            if field.name.startswith('_'):
-                attribute = attribute[1:]
+            field_name = str(field.name)
+            value = getattr(self, field_name)
+            if field_name in self.get_attribute_fields():
+                attribute = self.get_attribute_fields().get(field_name)
                 attributes[attribute] = value
         return attributes
 
@@ -119,16 +124,29 @@ class Field(PolymorphicModel):
     def __str__(self):
         return self.label
 
+    ATTRIBUTE_FIELDS = {
+        'label': 'verbose_name',
+        'help_text': 'help_text',
+        'optional': 'blank',
+        'nullable': 'null',
+        'max_length': 'max_length',
+        'on_delete': 'on_delete',
+        'related_name': 'related_name',
+    }
+
     field_type = None
     name = models.SlugField(max_length=255)
     label = models.CharField(max_length=255)
     weight = models.IntegerField(null=True, blank=True)
 
-    _help_text = models.TextField(max_length=650, blank=True)
-    _blank = models.BooleanField(default=True)
+    help_text = models.TextField(max_length=650, blank=True)
+    optional = models.BooleanField(default=True)
 
     options = models.TextField(max_length=65535, blank=True, help_text="Extra attributes in JSON dictionary format.")
     bundle = models.ForeignKey(Bundle, null=False, on_delete=models.CASCADE, related_name='fields', editable=False)
+
+    def get_attribute_fields(self):
+        return self.ATTRIBUTE_FIELDS
 
     def get_django_field(self):
         # @todo except
@@ -140,18 +158,17 @@ class Field(PolymorphicModel):
         return django_field(**attributes)
 
     def get_django_field_attributes(self):
-        attributes = {
-            'verbose_name': self.label,
-        }
+        attributes = dict()
         for field in self._meta.get_fields():
-            attribute = str(field.name)
-            value = getattr(self, attribute)
-            if attribute.startswith('_'):
-                attribute = attribute[1:]
+            field_name = str(field.name)
+            value = getattr(self, field_name)
+            if field_name in self.get_attribute_fields():
+                attribute = self.get_attribute_fields().get(field_name)
                 if attribute == 'on_delete':
                     value = getattr(models, value)
                 attributes[attribute] = value
-            elif attribute == 'options' and len(value):
+            elif field_name == 'options' and len(value):
+                # @todo validate options
                 options = dict(json.loads(value))
                 attributes.update(options)
         return attributes
@@ -160,13 +177,13 @@ class Field(PolymorphicModel):
 class CharField(Field):
     field_type = models.CharField(max_length=255, default="CharField", editable=False,
                                   choices=(("CharField", "CharField"),))
-    _max_length = models.IntegerField(default=255)
+    max_length = models.IntegerField(default=255)
 
 
 class TextField(Field):
     field_type = models.CharField(max_length=255, default="TextField", editable=False,
                                   choices=(("TextField", "TextField"),))
-    _max_length = models.IntegerField(default=65535)
+    max_length = models.IntegerField(default=65535)
 
 
 class DateTimeField(Field):
@@ -183,15 +200,15 @@ class ForeignKeyField(Field):
     field_type = models.CharField(max_length=255, default="ForeignKey", editable=False,
                                   choices=(("ForeignKey", "ForeignKey"),))
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
-    _null = models.BooleanField(default=True)
-    _on_delete = models.CharField(max_length=255, default="DO_NOTHING", editable=True, choices=(
+    nullable = models.BooleanField(default=True)
+    on_delete = models.CharField(max_length=255, default="DO_NOTHING", editable=True, choices=(
         ("CASCADE", "CASCADE"), ("PROTECT", "PROTECT"), ("SET_NULL", "SET_NULL"), ("SET_DEFAULT", "SET_DEFAULT"),
         ("DO_NOTHING", "DO_NOTHING")))
-    _related_name = models.CharField(max_length=255, default="+", editable=False)
+    related_name = models.CharField(max_length=255, default="+", editable=False)
 
 
 class ManyToManyField(Field):
     field_type = models.CharField(max_length=255, default="ManyToManyField", editable=False,
                                   choices=(("ManyToManyField", "ManyToManyField"),))
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
-    _related_name = models.CharField(max_length=255, default="+", editable=False)
+    related_name = models.CharField(max_length=255, default="+", editable=False)
