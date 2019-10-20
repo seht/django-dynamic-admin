@@ -43,5 +43,6 @@ TODO
 ----
 
 * Field weights
+* All field types
 * Runtime migrations
 * ...

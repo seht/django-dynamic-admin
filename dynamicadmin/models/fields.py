@@ -9,27 +9,6 @@ from polymorphic.models import PolymorphicModel
 from .bundle import Bundle
 
 
-# @todo
-def dynamic_field_factory(field_type, content_type=None, module=None, weight=1, **attributes):
-    base = getattr(models, field_type)
-
-    class BundleFieldEntity(base):
-        def __init__(self, *args):
-            self.weight = weight
-            super().__init__(*args, **attributes)
-
-        def deconstruct(self):
-            name, path, args, kwargs = super().deconstruct()
-            kwargs['weight'] = self.weight
-            return name, path, args, kwargs
-
-    field = type(field_type, (BundleFieldEntity,), {})
-
-    if content_type:
-        return field(content_type, **attributes)
-    return field(**attributes)
-
-
 class Fieldset(models.Model):
     def __str__(self):
         return self.label
