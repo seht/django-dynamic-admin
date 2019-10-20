@@ -17,14 +17,10 @@ class FieldAdminInline(StackedPolymorphicInline):
     class FieldAdminInlineChild(StackedPolymorphicInline.Child):
         def formfield_for_foreignkey(self, db_field, request, **kwargs):
             if db_field.name == "fieldset":
-
-                print("request")
-                print(dir(request))
-                print(dir(request))
-
                 kwargs["queryset"] = Fieldset.objects.filter(bundle=request.resolver_match.kwargs.get('object_id'))
             return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+    # @todo dynamic inlines
     class CharFieldInline(FieldAdminInlineChild):
         model = CharField
 
