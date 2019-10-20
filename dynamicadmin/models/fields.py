@@ -1,9 +1,11 @@
 import json
-from json.decoder import JSONDecodeError
 from collections import OrderedDict
+from json.decoder import JSONDecodeError
+
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from polymorphic.models import PolymorphicModel
+
 from .bundle import Bundle
 
 
@@ -60,7 +62,8 @@ class Field(PolymorphicModel):
     name = models.SlugField()
     label = models.CharField(max_length=255)
     weight = models.IntegerField(null=True, blank=True)
-    fieldset = models.ForeignKey(Fieldset, null=True, on_delete=models.SET_NULL, related_name='+', editable=True)
+    fieldset = models.ForeignKey(Fieldset, null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
+                                 editable=True)
 
     help_text = models.TextField(max_length=65535, blank=True)
     optional = models.BooleanField(default=True)

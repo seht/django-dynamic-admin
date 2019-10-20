@@ -20,6 +20,8 @@ class FieldAdminInline(StackedPolymorphicInline):
                 kwargs["queryset"] = Fieldset.objects.filter(bundle=request.resolver_match.kwargs.get('object_id'))
             return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+        classes = ("collapse",)
+
     # @todo dynamic inlines
     class CharFieldInline(FieldAdminInlineChild):
         model = CharField
@@ -57,6 +59,7 @@ class FieldsetsetAdminInline(admin.TabularInline):
     model = Fieldset
     extra = 0
     show_change_link = True
+    classes = ("collapse",)
 
 
 class BundleAdmin(PolymorphicInlineSupportMixin, admin.ModelAdmin):
