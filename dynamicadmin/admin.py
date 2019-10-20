@@ -6,31 +6,41 @@
 from django.apps import apps
 from django.contrib import admin
 from django.contrib.auth.management import create_permissions
-from django.db import models
 from django.db.utils import ProgrammingError
 from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline
 
-from .models import Field, CharField, TextField, DateTimeField, URLField, ForeignKeyField, ManyToManyField
-from .models import get_dynamic_models, get_bundle_objects
+from .models.fields import *
+from .models.bundle import get_dynamic_models, get_bundle_objects
 
 
 class FieldAdminInline(StackedPolymorphicInline):
-    class CharFieldInline(StackedPolymorphicInline.Child):
+    class FieldAdminInlineChild(StackedPolymorphicInline.Child):
+        def formfield_for_foreignkey(self, db_field, request, **kwargs):
+            if db_field.name == "fieldset":
+
+                print("request")
+                print(dir(request))
+                print(dir(request))
+
+                kwargs["queryset"] = Fieldset.objects.filter(bundle=request.resolver_match.kwargs.get('object_id'))
+            return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    class CharFieldInline(FieldAdminInlineChild):
         model = CharField
 
-    class TextFieldInline(StackedPolymorphicInline.Child):
+    class TextFieldInline(FieldAdminInlineChild):
         model = TextField
 
-    class DateTimeFieldInline(StackedPolymorphicInline.Child):
+    class DateTimeFieldInline(FieldAdminInlineChild):
         model = DateTimeField
 
-    class URLFieldInline(StackedPolymorphicInline.Child):
+    class URLFieldInline(FieldAdminInlineChild):
         model = URLField
 
-    class ForeignKeyFieldInline(StackedPolymorphicInline.Child):
+    class ForeignKeyFieldInline(FieldAdminInlineChild):
         model = ForeignKeyField
 
-    class ManyToManyFieldInline(StackedPolymorphicInline.Child):
+    class ManyToManyFieldInline(FieldAdminInlineChild):
         model = ManyToManyField
 
     model = Field
@@ -47,27 +57,25 @@ class FieldAdminInline(StackedPolymorphicInline):
     # classes = ['collapse']
 
 
+class FieldsetsetAdminInline(admin.TabularInline):
+    model = Fieldset
+    extra = 0
+    show_change_link = True
+
+
 class BundleAdmin(PolymorphicInlineSupportMixin, admin.ModelAdmin):
-    child_models = (Field,)
-    inlines = (FieldAdminInline,)
+    inlines = (FieldsetsetAdminInline, FieldAdminInline,)
 
 
 class DynamicModelAdmin(admin.ModelAdmin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # @todo fieldsets, field order
+        # print(self.fields)
+        # print(self.fieldsets)
+
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-
-        # print(form.base_fields)
-        #
-        # for field in form.base_fields:
-        #     print(field.weight)
-        #
-        # d1 = form.base_fields
-        # d2 = OrderedDict()
-        # for key in sorted(d1, key=lambda k: d1[k].weight):
-        #     d2[key] = d1[key]
-        #
-        # # print(form.base_fields)
-        # print(d2)
         return form
 
 

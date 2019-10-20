@@ -1,4 +1,4 @@
-from dynamicadmin.models import Bundle
+from dynamicadmin.models.bundle import Bundle
 
 
 class TestBundle(Bundle):
