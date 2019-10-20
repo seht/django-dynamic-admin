@@ -9,15 +9,16 @@ from django.contrib.auth.management import create_permissions
 from django.db.utils import ProgrammingError
 from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline
 
-from .models.fields import *
 from .models.bundle import get_dynamic_models, get_bundle_objects
+from .models.fields import *
 
 
 class FieldAdminInline(StackedPolymorphicInline):
     class FieldAdminInlineChild(StackedPolymorphicInline.Child):
         def formfield_for_foreignkey(self, db_field, request, **kwargs):
             if db_field.name == "fieldset":
-                kwargs["queryset"] = Fieldset.objects.filter(bundle=request.resolver_match.kwargs.get('object_id'))
+                kwargs["queryset"] = db_field.related_model.objects.filter(
+                    bundle=request.resolver_match.kwargs.get('object_id'))
             return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
         extra = 0
@@ -54,7 +55,7 @@ class FieldAdminInline(StackedPolymorphicInline):
     )
 
     extra = 0
-    classes = ("collapse",)
+    # classes = ("collapse",)
 
 
 class FieldsetsetAdminInline(admin.TabularInline):

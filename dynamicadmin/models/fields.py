@@ -80,7 +80,7 @@ class Field(PolymorphicModel):
                         # @todo raise
                         continue
                     else:
-                        if type(value) is not OrderedDict:
+                        if not isinstance(value, OrderedDict):
                             # @todo raise
                             continue
                         value = list(value.items())
@@ -92,7 +92,7 @@ class Field(PolymorphicModel):
                     # @todo raise
                     continue
                 else:
-                    if type(value) is not dict:
+                    if not isinstance(value, dict):
                         # @todo raise
                         continue
                     options.update(value)
